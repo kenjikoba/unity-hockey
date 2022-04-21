@@ -1,0 +1,198 @@
+fileFormatVersion: 2
+guid: 6b26835476c9dc84f867c3e5cc17e91d
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: Board
+    100002: BottomCircle
+    100004: BottomPackReceiver
+    100006: CenterInnerCircle
+    100008: CenterInnerCircle.001
+    100010: CenterLne
+    100012: CenterLne.001
+    100014: CenterOuterCircle
+    100016: Edge
+    100018: GoalReceive
+    100020: //RootNode
+    100022: LeftBottomCircle
+    100024: LeftTopCIrcle
+    100026: Lines
+    100028: RightBottomCircle
+    100030: RightTopCircle
+    100032: TopCIrcle
+    100034: TopPackReceiver
+    400000: Board
+    400002: BottomCircle
+    400004: BottomPackReceiver
+    400006: CenterInnerCircle
+    400008: CenterInnerCircle.001
+    400010: CenterLne
+    400012: CenterLne.001
+    400014: CenterOuterCircle
+    400016: Edge
+    400018: GoalReceive
+    400020: //RootNode
+    400022: LeftBottomCircle
+    400024: LeftTopCIrcle
+    400026: Lines
+    400028: RightBottomCircle
+    400030: RightTopCircle
+    400032: TopCIrcle
+    400034: TopPackReceiver
+    2100000: Material
+    2100002: Material.014
+    2100004: Material.007
+    2100006: Material.019
+    2100008: Material.020
+    2100010: Material.015
+    2100012: Material.016
+    2100014: Material.018
+    2100016: Material.017
+    2100018: Material.025
+    2100020: Material.026
+    2100022: Material.028
+    2100024: Material.013
+    2100026: Material.001
+    2100028: Material.011
+    2100030: Material.005
+    2100032: Material.034
+    2100034: Material.030
+    2100036: Material.033
+    2100038: Material.032
+    2100040: Material.031
+    2100042: Material.041
+    2100044: Material.045
+    2100046: Material.044
+    2100048: Material.027
+    2100050: Material.029
+    2300000: Board
+    2300002: BottomCircle
+    2300004: BottomPackReceiver
+    2300006: CenterInnerCircle
+    2300008: CenterInnerCircle.001
+    2300010: CenterLne
+    2300012: CenterLne.001
+    2300014: CenterOuterCircle
+    2300016: Edge
+    2300018: LeftBottomCircle
+    2300020: LeftTopCIrcle
+    2300022: RightBottomCircle
+    2300024: RightTopCircle
+    2300026: TopCIrcle
+    2300028: TopPackReceiver
+    3300000: Board
+    3300002: BottomCircle
+    3300004: BottomPackReceiver
+    3300006: CenterInnerCircle
+    3300008: CenterInnerCircle.001
+    3300010: CenterLne
+    3300012: CenterLne.001
+    3300014: CenterOuterCircle
+    3300016: Edge
+    3300018: LeftBottomCircle
+    3300020: LeftTopCIrcle
+    3300022: RightBottomCircle
+    3300024: RightTopCircle
+    3300026: TopCIrcle
+    3300028: TopPackReceiver
+    4300000: Board
+    4300002: CenterInnerCircle
+    4300004: CenterLne
+    4300006: CenterOuterCircle
+    4300008: CenterLne.001
+    4300010: CenterInnerCircle.001
+    4300012: RightBottomCircle
+    4300014: LeftBottomCircle
+    4300016: RightTopCircle
+    4300018: LeftTopCIrcle
+    4300020: BottomCircle
+    4300022: TopCIrcle
+    4300024: Edge
+    4300026: TopPackReceiver
+    4300028: BottomPackReceiver
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
