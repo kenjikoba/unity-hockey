@@ -4,6 +4,12 @@
 エアホッケーでは, スマッシャーと呼ばれる器具を用いて盤上のパックを打ち合い, 相手のゴールに入れて得点を競い合います. 今回はAIにスマッシャーのコントールの仕方を学ばせます. \
 配布されているプログラムでは, 自分の位置, パックの位置, 敵の位置を入力とし, 自分の動作(速度ベクトル)を出力としたニューラルネットワークを学習させています.
 
+## ダウンロード
+```shell
+$ git clone https://github.com/trombiano1/airhockey.proj.git
+```
+で適当なフォルダにcloneした後、Unity HubのOpenから`airhockey.proj`を選択し開いてください. GitHubにはライブラリはのせていませんが, Unityで開く際に自動的に生成されます.
+
 ## ソースコードの概要
 Sceneフォルダ内のHockeyGameを動かすことで学習が始まります. ManualPlayがオフであればPlayer1とPlayer2が対決し学習します. ManualPlayをオンにすると, その時点までに学習したBrainが制御するComputerPlayerとプレーヤーがキーボードなどで操作するManualPlayerが対決します.
 
