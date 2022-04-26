@@ -81,7 +81,7 @@ public class HockeyAgent : Agent
         var pos = transform.position;
         var pack_pos = Pack.transform.position;
         var opponent_pos = Opponent.transform.position;
-        //        
+
         observations.Add(pos.x*scalingFactor);
         observations.Add(pos.z*scalingFactor*ModeSign);
         observations.Add((pos.x-pack_pos.x)*scalingFactor);
@@ -94,8 +94,8 @@ public class HockeyAgent : Agent
     public override void Stop() {
         PlayerController.Stop();
     }
-
-    //
+    
+    // actionを受け取り、プレーヤーを動かし、報酬をセットする
     public override void AgentAction(double[] action) {
         // 時間切れなら何もしない
         if (TimeUp) { return; }

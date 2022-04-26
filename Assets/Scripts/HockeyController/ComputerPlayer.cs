@@ -54,7 +54,7 @@ public class ComputerPlayer : MonoBehaviour
             string brain_txt = System.IO.Path.Combine(Application.streamingAssetsPath, "ComputerBrains/"+computer_level+".txt");
             brain.Load(brain_txt);
         }
-
+        
         //現在の状態を取得
         var observation = agent.CollectObservations();
         //行動を決定

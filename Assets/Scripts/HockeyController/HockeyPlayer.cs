@@ -69,7 +69,7 @@ public class HockeyPlayer : MonoBehaviour
 
         // プレーヤーの位置を更新 
         //  clippingPosで動きを制限
-        //  [現在地]　→ [現在地+(target_diff)] のベクトルの１割分だけプレーヤーを動かす
+        //  [現在地]　→ [現在地+(target_diff)] のベクトルの0.1倍だけプレーヤーを動かす
         rb.MovePosition(clippingPos(Vector3.Lerp(transform.position, transform.position + target_diff, 0.1f)));
     }
 
