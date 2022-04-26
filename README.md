@@ -19,4 +19,15 @@ actionを受け取り, 実際にパックを移動させます.
 Agentの状態を入力として受け取り, 行動を出力します. 
 - `/Assets/Scripts/AI/NEEnvironment.cs`, `/Assets/Scripts/AI/QEnvironment.cs`\
 AgentとBrainを管理し, 一定期間でAgentとBrainを更新します.
+- `/Assets/Scripts/HockeyPlayer/ManualPlayer.cs`\
+ManualPlayの時にのみ使われます. キーボードやマウスからの入力に従ってプレーヤーを動かします.
+- `/Assets/Scripts/HockeyPlayer/ComputerPlayer.cs`\
+ManualPlayの時にのみ使われます. それまでに学習したBrainのデータを使ってプレーヤーと対戦します.
 
+## 困ったら
+- 再生ボタンを押しても動かない
+  - Agent Speedが0になっているかもしれません. 少し上げてみてください.
+- ManualPlayボタンが押せない
+  - 学習を始めてしばらく経ってから押してみてください.
+- ManualPlayでパックを動かせない
+  - 使用できるキーは矢印ではなくWASDです
