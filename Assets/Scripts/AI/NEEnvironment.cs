@@ -62,7 +62,6 @@ public class NEEnvironment : Environment
             GObjects.Add(obj);
             Agents.Add(obj.GetComponent<Agent>());
         }
-
         SetStartAgents();
     }
 

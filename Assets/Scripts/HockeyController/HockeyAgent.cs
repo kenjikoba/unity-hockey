@@ -5,46 +5,46 @@ using UnityEngine.UI;
 
 public class HockeyAgent : Agent
 {
-    //Playerの動かすオブジェクト、相手Playerのオブジェクト
+    // Playerの動かすオブジェクト、相手Playerのオブジェクト
     public GameObject Pack;
     public GameObject Opponent;
     
-    //フィールドの上部にいるか、下部にいるか
+    // フィールドの上部にいるか、下部にいるか
     private int ModeSign;
 
-    //時間制限、現在の時間、時間切れ判定変数、ゲームの状態
+    // 時間制限、現在の時間、時間切れ判定変数、ゲームの状態
     public float maxBattleTime = 40;
     public float BattleTime { get; set; }
     public bool TimeUp = false;
     public string gameState = "onPlaying";
     private int GoalCounter { get; set; }
 
-    //パックに当たったか、経過後のカウント
+    // パックに当たったか、経過後のカウント
     private bool HitPack = false;
     private int HitPackCounter = 10;
     
 
-    //Playerコントローラ、パックのコントローラの取得
+    // Playerコントローラ、パックのコントローラの取得
     private HockeyPlayer PlayerController;
     private PackManager PackManager;
 
-    //初期状態を保持しておくための変数
+    // 初期状態を保持しておくための変数
     private Vector3 StartPosition { get; set; }
     private Vector3 PackStartPosition { get; set; }
     private Vector3 StartInertia { get; set; }
     private Vector3 PackStartInertia { get; set; }
 
-    //PackのVecocity取得用のRigidbody
+    // PackのVecocity取得用のRigidbody
     private Rigidbody pack_rb { get; set; }
 
     private void Awake() {
-        //Playerの制御コントローラーを取得
+        // Playerの制御コントローラーを取得
         PlayerController = GetComponent<HockeyPlayer>();
         pack_rb = Pack.GetComponent<Rigidbody>();
         PackManager = Pack.GetComponent<PackManager>();
     }
 
-    //開始時に呼び出される初期化処理
+    // 開始時に呼び出される初期化処理
     private void Start() {
         //初期位置の登録
         StartPosition = transform.position;
@@ -56,7 +56,7 @@ public class HockeyAgent : Agent
         }
     }
 
-    //初期状態に戻す
+    // 初期状態に戻す
     public override void AgentReset() {
         PlayerController.Reset();
         transform.position = StartPosition;
@@ -73,7 +73,7 @@ public class HockeyAgent : Agent
         throw new NotImplementedException();
     }
 
-    //Agentへの入力を集める
+    // Agentへの入力を集める
     public override List<double> CollectObservations() {
         var observations = new List<double>();
         double scalingFactor = 10f;
@@ -97,19 +97,19 @@ public class HockeyAgent : Agent
 
     //
     public override void AgentAction(double[] action) {
-        //時間切れなら何もしない
+        // 時間切れなら何もしない
         if (TimeUp) { return; }
-        //コントローラーにActionを渡す
+        // コントローラーにActionを渡す
         action[1] *= ModeSign;
         PlayerController.Move(action);
         
-        //時間を更新
+        // 時間を更新
         BattleTime += Time.fixedDeltaTime;
 
-        //パックの正面にいればいるほど報酬を追加
+        // パックの正面にいればいるほど報酬を追加
         AddReward(1-Mathf.Abs(Pack.transform.position.x - transform.position.x));
        
-        //ゴールを決めるとプラスの報酬
+        // ゴールを決めるとプラスの報酬
         if ((ModeSign == 1 && Pack.transform.position.z > 1.03f) || (ModeSign == -1 && Pack.transform.position.z < -1.03f) ) {
             GoalCounter++;
             AddReward(1000);
@@ -118,7 +118,7 @@ public class HockeyAgent : Agent
             gameState = "GetPoint";
             return;    
         }
-        //ゴールを決められるとマイナスの報酬
+        // ゴールを決められるとマイナスの報酬
         if ((ModeSign == 1 && Pack.transform.position.z < -1.03f) || (ModeSign == -1 && Pack.transform.position.z > 1.03f) ) {
             GoalCounter++;
             AddReward(-1000);
@@ -128,7 +128,7 @@ public class HockeyAgent : Agent
             return;
         }
 
-        //パックを押し出すことへの報酬
+        // パックを押し出すことへの報酬
         if (HitPack) {
             AddReward(pack_rb.velocity.z * ModeSign * 10);
             HitPackCounter--;
@@ -138,7 +138,7 @@ public class HockeyAgent : Agent
             HitPackCounter = 10;
         }
 
-        //時間切れ判定
+        // 時間切れ判定
         if(BattleTime > maxBattleTime) {
             GoalCounter++;
             AgentReset();
@@ -146,7 +146,7 @@ public class HockeyAgent : Agent
             return;
         }
 
-        //試合終了判定
+        // 試合終了判定
         if (GoalCounter >= 7) {
             AgentReset();
             TimeUp = true;
@@ -157,7 +157,7 @@ public class HockeyAgent : Agent
     }
 
     public void OnCollisionStay(Collision collision) {
-        //壁との衝突はマイナス報酬
+        // 壁との衝突はマイナス報酬
         if (collision.gameObject.tag == "wall") {
             AddReward(-5);
         } else if (collision.gameObject.tag == "Pack") {
