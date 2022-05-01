@@ -82,7 +82,7 @@ public class DEEnvironment : Environment
         SetStartAgents();
     }
     
-    // 対戦する個体をAgentsSetに追加
+    // 次に対戦する個体(2つ)をAgentsSetに追加
     void SetStartAgents() {
         //UnityEngine.Random.InitState( name.Length );
         CurrentBrains = new Queue<NNBrain>(childBrains);
@@ -121,18 +121,18 @@ public class DEEnvironment : Environment
         AgentsSet.ForEach(p => { p.agent.TimeUp = false; });
     }
 
-    /*************************************/
-    /***** 毎フレーム呼ばれ, 学習を進める *****/
-    /*************************************/
+    /*****************************************/
+    /***** 毎フレーム呼ばれ, 学習を進める関数 *****/
+    /****************************************/
     void FixedUpdate() {
-        // Waiting, Restart, ManualModeであれば学習を進めない
+        // Waiting, Restart, ManualModeのいずれかがtrueであれば学習を進めない
         if (WaitingFlag || RestartFlag || ManualModeFlag) {
             return;
         }
 
-        // AgentsSetの2つのAgentについて更新する
+        // AgentsSetの2つのAgentを更新する
         foreach(var pair in AgentsSet.Where(p => !p.agent.IsDone)) {
-            // 観測・計算・実行
+            // 観測・計算・実行という対戦の一連の流れをする関数
             AgentUpdate(pair.agent, pair.brain);
         }
 
