@@ -31,6 +31,8 @@ public class NNBrain : Brain
     [SerializeField] private int outputSize = 0;
     public int OutputSize { get { return outputSize; } private set { outputSize = value; } }
 
+    // DEEnvironmentから行動を取得する際に呼ばれる.
+    // actionを返す.
     public double[] GetAction(List<double> observation) {
         var action = Predict(observation.ToArray());
         return action;
@@ -69,6 +71,7 @@ public class NNBrain : Brain
         }
     }
 
+    // ボードの状態をinputとしてNNに入力し, 出力となる行動を計算する
     public double[] Predict(double[] inputs) {
         var output = new Matrix(inputs);
         var result = new double[OutputSize];
@@ -185,6 +188,9 @@ public class NNBrain : Brain
         
     }
 
+    // 差分進化のx1 + F(x3 - x2)を計算する関数.
+    // [0,1]で生成した乱数が交叉率を下回っていた場合は新しい遺伝子は破棄する.
+    // 世代生成中にDEEnvironmentから呼ばれる.
     public NNBrain DE(NNBrain ind1, NNBrain ind2, NNBrain ind3, double ampFactor, double crossRate) {
         double [] currentDNA = ToDNA();
         double [] newDNA = ToDNA();
