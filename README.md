@@ -42,15 +42,17 @@ $ git clone https://github.com/trombiano1/airhockey.proj.git
 まず, `DEEnvironment`が個体1, 個体2, 個体3をランダムに選びます. それぞれのDNAをx1, x2, x3とします.
 `DEEnvironment`は`NNBrain`にx1, x2, x3を送り, `NNBrain`がx1 += F * (x3 - x2)を計算します. これが子供のDNAとなります. 
 
+<img src="Pictures/breeding.png" width="600">
+
 スケーリングパラメータFは`mutationScalingFactor`という値として`DEEnvironment.cs`内で定義されています.　
 
-なお, この実験では交叉率`crossrate`が定められており, その割合の子供が新しい遺伝子を持ちます. その他の子供は親の遺伝子をそのまま引き継ぎます.
+なお, この実験では交叉率`crossrate`が定められており, その割合の子供が新しいDNAを持ちます. その他の子供は親のDNAをそのまま引き継ぎます.
 
 これを繰り返し, 子供を生成していきます. 今は100個の子供を生成する設定になっています.
 ### 対戦 (Selection)
 `DEEnvironment`は`HockeyAgent`を呼んでボードの状態やプレーヤーの位置などの情報を取得してもらい, 情報を`NNBrain`に送ります.　
 
-`NNBrain`は個体のNNとボードの状況を受け取り, そのNNを使って次に取るべき行動`action`を計算して返します.
+`NNBrain`は個体のNNとボードの状況を受け取り, そのNNを使って次に取るべき行動`action`を計算して返します. このプログラムでは, `action`はプレーヤーの速度ベクトルとして伝えられます.
 
 `DEEnvironment`は返ってきた`action`を`HockeyAgent`に送り, 実際にその行動を取るように指示します.
 
@@ -62,11 +64,33 @@ $ git clone https://github.com/trombiano1/airhockey.proj.git
 - ゴールを決めると大きな報酬(1000)を足します 
 - ゴールを決められると大きな報酬(1000)を引きます
 
-この操作を繰り返すことで対戦が進んでいきます. 時間切れになると対戦が止まり, 2つの個体に対して報酬値が決まります. これを繰り返し, 全ての個体に対して報酬値が決まります.
-
 <img src="Pictures/vs.png" width="600">
 
-Sceneフォルダ内のHockeyGameを開き, 画面上部の再生ボタンを押すと学習が始まります. 再生中にはGame画面に表示されるスライダでプログラムの実行速度を調整できます. コンピュータへの負荷を少なくしたい場合は、描画をオフにすることもできます。
+この操作を繰り返すことで対戦が進んでいきます. 時間切れになると対戦が止まり, 2つの個体の報酬値が決まります. これを繰り返し, 全ての個体に対して報酬値が決まります.
+
+最後に, 親と子の報酬値を比較し, 子供の方が高い場合は子供, そうでない場合は親のDNAを残します.
+
+### 各コードについての詳細
+- `/Assets/Scripts/AI/DEEnvironment.cs`\
+AgentとBrainを管理し, 一定期間ごとにAgentとBrainを更新します.
+- `/Assets/Scripts/HockeyController/HockeyAgent.cs` \
+  ボードの状態を観測し, 必要な情報を取得します. また, actionを受け取ってHockeyPlayer.csに渡します. ゲームの残り時間も管理します. ボードの状態に従い個体の報酬を管理します.
+- `/Assets/Scripts/HockeyController/HockeyPlayer.cs`\
+`action`を受け取り, 実際にパックを移動させます. 受け取った`action`は陣地を出ることがあるため, その場合は動きを制限します.
+- `/Assets/Scripts/AI/NNBrain.cs`\
+ボードの状態を入力として受け取り, NNを使って次に取るべき行動を計算して返します. 
+- `/Assets/Scripts/HockeyPlayer/ManualPlayer.cs`\
+ManualPlayの時にのみ使われます. キーボードやマウスからの入力に従ってプレーヤーを動かします.
+- `/Assets/Scripts/HockeyPlayer/ComputerPlayer.cs`\
+ManualPlayの時にのみ使われます. それまでに学習したBrainのデータを使ってプレーヤーと対戦します.
+
+## Unity Editor上での操作説明
+### Sceneの実行
+ProjectタブのAssets > ScenesからHockeyGameをダブルクリックし開きます.
+
+<img src="Pictures/project.png" alt="gameinterface" width="250"/>
+
+画面上部の再生ボタンを押すと学習が始まります. 再生中にはGame画面に表示されるスライダでプログラムの実行速度を調整できます. コンピュータへの負荷を少なくしたい場合は、描画をオフにすることもできます。
 
 <img src="Pictures/gameinterface.png" alt="gameinterface" width="400"/>
 
@@ -75,19 +99,6 @@ ManualPlayがオフであればPlayer1とPlayer2が対決しそれぞれが学�
 自動運転プログラムなどと同様にAgent, NNBrain, NNEnvironment の3つのクラスで基本的に構成されています. Agentが観測できる状態は自分の位置, 自分とパックの差ベクトル, 敵の位置です．Agentは速度ベクトルで動かし方を指示します. 
 
 時間制限を超えるか, パックがゴールに入るとゲームオーバーとなりリセットされます. 
-
-- `/Assets/Scripts/HockeyController/HockeyAgent.cs` \
-  環境を観測し, 必要な情報を取得します. また, actionをBrainから受け取ってHockeyPlayer.csに渡します.
-- `/Assets/Scripts/HockeyController/HockeyPlayer.cs`\
-actionを受け取り, 実際にパックを移動させます.
-- `/Assets/Scripts/AI/NNBrain.cs`, `QBrain.cs`\
-Agentの状態を入力として受け取り, 行動を出力します. 
-- `/Assets/Scripts/AI/NEEnvironment.cs`, `/Assets/Scripts/AI/QEnvironment.cs`\
-AgentとBrainを管理し, 一定期間でAgentとBrainを更新します.
-- `/Assets/Scripts/HockeyPlayer/ManualPlayer.cs`\
-ManualPlayの時にのみ使われます. キーボードやマウスからの入力に従ってプレーヤーを動かします.
-- `/Assets/Scripts/HockeyPlayer/ComputerPlayer.cs`\
-ManualPlayの時にのみ使われます. それまでに学習したBrainのデータを使ってプレーヤーと対戦します.
 
 ## 困ったら
 - 再生ボタンを押しても動かない
