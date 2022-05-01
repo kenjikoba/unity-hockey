@@ -2,7 +2,7 @@
 
 ## 概要
 エアホッケーでは, スマッシャーと呼ばれる器具を用いて盤上のパックを打ち合い, 相手のゴールに入れて得点を競い合います. 今回はAIにスマッシャーのコントールの仕方を学ばせます. \
-配布されているプログラムでは, 自分の位置, パックの位置, 敵の位置を入力とし, 自分の動作(速度ベクトル)を出力とし, 差分進化で学習します.
+配布されているプログラムでは, 自分の位置, パックの位置, 敵の位置を入力とし, 自分の動作(速度ベクトル)を出力とし, ニューラルネットワークを差分進化で学習させます.
 
 <img src="https://user-images.githubusercontent.com/56354049/165917364-f45a6abc-6c44-466e-93f5-cc0fff05c314.gif" alt="drawing" width="500"/>
 
@@ -32,7 +32,7 @@ $ git clone https://github.com/trombiano1/airhockey.proj.git
 スケーリングパラメータFが大きいと大ぶりな探索となり, 探索は早くなりますが収束が不安定になります. 差分進化について詳しくは参考文献などを参照してください.
 
 ## ソースコードの概要
-このプログラムでは個体それぞれが行動を決定するニューラルネットワーク(NN)を持っています. また, そのNNは1列の実数の配列(DNA)としても保存されています. このDNAをベクトルとして**Crossover**などの演算をしています.
+このプログラムでは個体それぞれが行動を決定するニューラルネットワーク(NN)を持っています. また, NNは1列の実数の配列(DNA)としても保存されています. このDNAをベクトルとして**Crossover**などの演算をしています.
 
 <img src="Pictures/nndna.png" width="300">
 
@@ -44,15 +44,13 @@ $ git clone https://github.com/trombiano1/airhockey.proj.git
 
 <img src="Pictures/breeding.png" width="600">
 
-スケーリングパラメータFは`mutationScalingFactor`という値として`DEEnvironment.cs`内で定義されています.　
-
 なお, この実験では交叉率`crossrate`が定められており, その割合の子供が新しいDNAを持ちます. その他の子供は親のDNAをそのまま引き継ぎます.
 
 これを繰り返し, 子供を生成していきます. 今は100個の子供を生成する設定になっています.
 ### 対戦 (Selection)
 `DEEnvironment`は`HockeyAgent`を呼んでボードの状態やプレーヤーの位置などの情報を取得してもらい, 情報を`NNBrain`に送ります.　
 
-`NNBrain`は個体のNNとボードの状況を受け取り, そのNNを使って次に取るべき行動`action`を計算して返します. このプログラムでは, `action`はプレーヤーの速度ベクトルとして伝えられます.
+`NNBrain`は個体のNNの情報を持っており, 受け取ったボードの状態と個体のNNを使ってプレーヤーが次に取るべき行動`action`を計算して返します. このプログラムでは, `action`はプレーヤーの速度ベクトルとして伝えられます.
 
 `DEEnvironment`は返ってきた`action`を`HockeyAgent`に送り, 実際にその行動を取るように指示します.
 
@@ -68,21 +66,29 @@ $ git clone https://github.com/trombiano1/airhockey.proj.git
 
 この操作を繰り返すことで対戦が進んでいきます. 時間切れになると対戦が止まり, 2つの個体の報酬値が決まります. これを繰り返し, 全ての個体に対して報酬値が決まります.
 
-最後に, 親と子の報酬値を比較し, 子供の方が高い場合は子供, そうでない場合は親のDNAを残します.
+最後に, 全ての個体について親と子の報酬値を比較し, 子供の方が高い場合は子供, そうでない場合は親のDNAを残します.
 
 ### 各コードについての詳細
 - `/Assets/Scripts/AI/DEEnvironment.cs`\
 AgentとBrainを管理し, 一定期間ごとにAgentとBrainを更新します.
+
 - `/Assets/Scripts/HockeyController/HockeyAgent.cs` \
-  ボードの状態を観測し, 必要な情報を取得します. また, actionを受け取ってHockeyPlayer.csに渡します. ゲームの残り時間も管理します. ボードの状態に従い個体の報酬を管理します.
+  ボードの状態を観測し, 必要な情報(自分の位置, 敵の位置, パックと自分の位置の差)を取得します. また, actionを受け取ってHockeyPlayer.csに渡します. ゲームの残り時間も管理します. ボードの状態に従い個体の報酬を管理します.
+
 - `/Assets/Scripts/HockeyController/HockeyPlayer.cs`\
-`action`を受け取り, 実際にパックを移動させます. 受け取った`action`は陣地を出ることがあるため, その場合は動きを制限します.
+`action`を受け取り, 実際にパックを移動させます. 受け取った`action`は陣地を出る可能性や制限速度を超える可能性があるため, その場合は動きを制限します.
+
 - `/Assets/Scripts/AI/NNBrain.cs`\
-ボードの状態を入力として受け取り, NNを使って次に取るべき行動を計算して返します. 
+ボードの状態を入力として受け取り, NNを使って次に取るべき行動を計算し返します. 
+
 - `/Assets/Scripts/HockeyPlayer/ManualPlayer.cs`\
 ManualPlayの時にのみ使われます. キーボードやマウスからの入力に従ってプレーヤーを動かします.
+
 - `/Assets/Scripts/HockeyPlayer/ComputerPlayer.cs`\
-ManualPlayの時にのみ使われます. それまでに学習したBrainのデータを使ってプレーヤーと対戦します.
+ManualPlayの時にのみ使われます. それまでに学習した`NNBrain`のうち最も成績の良かったNNを使ってプレーヤーと対戦します.
+
+- `NEEnvironment`, `NERuntime`, `QEnvironment`, `QBrain`など\
+現在使われていません.
 
 ## Unity Editor上での操作説明
 ### Sceneの実行
@@ -94,11 +100,36 @@ ProjectタブのAssets > ScenesからHockeyGameをダブルクリックし開き
 
 <img src="Pictures/gameinterface.png" alt="gameinterface" width="400"/>
 
-ManualPlayがオフであればPlayer1とPlayer2が対決しそれぞれが学習します(Populationが2ずつ増えるのはこれが理由です). ManualPlayをオンにすると, その時点までに学習したBrainが制御するComputerPlayerとプレーヤーがキーボードなどで操作するManualPlayerが対決します.
+### ManualPlay
+ManualPlayがオフであればPlayer1とPlayer2が対決しそれぞれが学習します(Populationが2ずつ増えるのはこれが理由)が, ManualPlayをオンにするとその時点までに学習したNNのうち最も成績が良かったNNが制御する`ComputerPlayer`とプレーヤーがキーボードなどで操作する`ManualPlayer`が対決します.
 
-自動運転プログラムなどと同様にAgent, NNBrain, NNEnvironment の3つのクラスで基本的に構成されています. Agentが観測できる状態は自分の位置, 自分とパックの差ベクトル, 敵の位置です．Agentは速度ベクトルで動かし方を指示します. 
+### パラメータの設定
+Hierarchy > Environmentを選択すると, 以下の画面が表示されます.
 
-時間制限を超えるか, パックがゴールに入るとゲームオーバーとなりリセットされます. 
+<img src="Pictures/environment.png" width="250">
+
+
+
+| パラメータ  | 説明 |
+| ------------- | ------------- |
+| Total Population  | 1世代ごとの個体数  |
+| Mutation Scaling Factor  | スケーリングファクターF(上述)  |
+| Cross Rate | 交叉率(上述) |
+| Input Size | 入力レイヤの大きさ(6)<br> - 自分のx座標<br> - 自分のz座標<br> - 自分とパックのx座標の差<br> - 自分とパックのz座標の差<br> - 相手のx座標<br> - 相手のz座標 |
+| Hidden Size | 隠れレイヤの大きさ |
+| Hidden Layers | 隠れレイヤの数 |
+| Output Size | 出力レイヤの大きさ(2)<br> - 移動の速度ベクトルのx成分<br> - 移動の速度ベクトルのz成分 |
+| N Agents | 2 (同時に対戦するプレーヤー数, 2で固定) |
+| Waiting Flag<br>Restart Flag<br>Manual Mode Flag<br> | Agentによって試合の管理に利用される変数です |
+
+また, Hierarchy > Player1, Player2を選択すると, 以下の画面が表示されます.
+
+<img src="Pictures/player.png" width="250">
+
+| パラメータ  | 説明 |
+| ------------- | ------------- |
+| Max Speed  | プレーヤーの動くことができる速さの上限です. |
+| Max Battle Time  | 試合時間の上限です  |
 
 ## 困ったら
 - 再生ボタンを押しても動かない

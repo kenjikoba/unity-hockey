@@ -58,25 +58,31 @@ public class DEEnvironment : Environment
     public bool RestartFlag = false;
     public bool ManualModeFlag = false;
 
+    /***** 学習が開始された際に呼ばれる *****/
     void Awake() {
+        // 同時にプレイするプレーヤー数. 現在は2で固定.
         if (nAgents != 2) {
             Debug.Log("Now, nAgents must be equal to 2.");
             nAgents = 2;
         }
         
+        // NNを作り, 初期値として親と子に同じNNを与える
         for(int i = 0; i < TotalPopulation; i++) {
             childBrains.Add(new NNBrain(InputSize, HiddenSize, HiddenLayers, OutputSize));
             parentBrains.Add(childBrains[i]);
         }
 
+        // Objectの追加
         GObjects.Add(GObject1);
         Agents.Add(GObject1.GetComponent<HockeyAgent>());
         GObjects.Add(GObject2);
         Agents.Add(GObject2.GetComponent<HockeyAgent>());
 
+        // 学習開始
         SetStartAgents();
     }
-
+    
+    // 対戦する個体をAgentsSetに追加
     void SetStartAgents() {
         //UnityEngine.Random.InitState( name.Length );
         CurrentBrains = new Queue<NNBrain>(childBrains);
@@ -102,26 +108,35 @@ public class DEEnvironment : Environment
         GObject2.SetActive(true);
     }
 
+    // Agentが切り替わる際にReset()が呼ばれる
     /***** Reset() Is Used When Agents Change *****/
     public void Reset() {
         WaitingFlag = false;
     }
 
+    // Agentが変わらない場合はRestart()が呼ばれる
     /***** Restart() Is Used When Agents Don't Change *****/
     public void Restart() {
         RestartFlag = false;
         AgentsSet.ForEach(p => { p.agent.TimeUp = false; });
     }
 
+    /*************************************/
+    /***** 毎フレーム呼ばれ, 学習を進める *****/
+    /*************************************/
     void FixedUpdate() {
+        // Waiting, Restart, ManualModeであれば学習を進めない
         if (WaitingFlag || RestartFlag || ManualModeFlag) {
             return;
         }
 
+        // AgentsSetの2つのAgentについて更新する
         foreach(var pair in AgentsSet.Where(p => !p.agent.IsDone)) {
+            // 観測・計算・実行
             AgentUpdate(pair.agent, pair.brain);
         }
 
+        // 時間切れであればRestart, 時間切れでなければ再開
         AgentsSet.RemoveAll(p => {
             if(p.agent.IsDone) {
                 //TODO? (CAUTION) : Getting High Reward will get Difficult As Generation Goes
@@ -140,19 +155,28 @@ public class DEEnvironment : Environment
         });
 
         if(CurrentBrains.Count == 0 && AgentsSet.Count == 0) {
+            // 全ての個体が対戦済みであれば新しい世代を生成
             SetNextGeneration();
         }
         else {
+            // 次の個体をセットする
             SetNextAgents();
         }
     }
-
+    
+    /***************************/
+    /***** プレーヤーを動かす *****/
+    /***************************/
     private void AgentUpdate(Agent a, NNBrain b) {
+        // ボードの状態を取得
         var observation = a.CollectObservations();
+        // NNBrainからactionを取得
         var action = b.GetAction(observation);
+        // Agentにactionを送る
         a.AgentAction(action); 
     }
 
+    // 次の個体をセットする
     private void SetNextAgents() {
         int size = Math.Min(NAgents - AgentsSet.Count, CurrentBrains.Count);
         for(var i = 0; i < size; i++) {
@@ -169,6 +193,7 @@ public class DEEnvironment : Environment
         UpdateText();
     }
 
+    // 新しい世代をセットする
     private void SetNextGeneration() {
         GenAvgReward = GenSumReward / TotalPopulation;
         
@@ -187,10 +212,14 @@ public class DEEnvironment : Environment
         return 0;
     }
 
+    /*******************************************************/
     /***** DE(Differential Evolution) + EliteSelection *****/
+    /*****           新しい世代をDEの手法で生成する         *****/
+    /*******************************************************/
     private void GenPopulation() {
         var children = new List<NNBrain>();
         for (int i = 0; i < TotalPopulation; i++) {
+            /***** 親と子とを比較し, 報酬が高い方を残す *****/
             /***** Keep Child-Indiv When It Is Better Than Parent *****/
             if (parentBrains[i].Reward <= childBrains[i].Reward) {
                  parentBrains[i] = childBrains[i];
@@ -198,23 +227,32 @@ public class DEEnvironment : Environment
          }
 
         /****** Sort Parents *****/
+        // 親を報酬が高い順にソートする
         parentBrains = parentBrains.ToList();
         parentBrains.Sort(CompareBrains);
         //File.WriteAllText("BestBrain.json", JsonUtility.ToJson(parentBrains[0]));
         parentBrains[0].Save("./Assets/BestBrain.txt");
 
         /***** EliteSelection *****/
+        // 最も成績が良かった親の子は親と同じNNを持つ
         int ElitePop = 1;
         for (int i = 0; i < ElitePop; i++) {
             children.Add(parentBrains[i]);
         }
 
+        /*****************************/
         /***** Main DE Operation *****/
+        /*****    差分進化計算     *****/
+        /*****************************/
         for (int i = 0; i < TotalPopulation-ElitePop; i++) {
+            // 親となる個体を選ぶ
             int ind1 = UnityEngine.Random.Range(0, TotalPopulation);
+            // 探索点となる2つの個体を選ぶ
             int ind2 = UnityEngine.Random.Range(0, TotalPopulation);
             int ind3 = UnityEngine.Random.Range(0, TotalPopulation);
+            // x_child = x1 + F ( x3 - x2 )を計算する
             NNBrain child = parentBrains[i].DE(parentBrains[ind1], parentBrains[ind2], parentBrains[ind3], mutationScalingFactor, crossRate);
+            // x_childをDNAとして持たせる
             children.Add(child);
         }
         childBrains = children;
