@@ -16,6 +16,7 @@
   - [概要](#概要)
   - [目次](#目次)
   - [ダウンロード](#ダウンロード)
+      - [動作確認](#動作確認)
   - [アルゴリズムの説明](#アルゴリズムの説明)
   - [ソースコードの概要](#ソースコードの概要)
     - [Mutation, Crossover](#mutation-crossover)
@@ -29,11 +30,19 @@
   - [参考文献](#参考文献)
 
 ## ダウンロード
-Google Driveの[リンク](https://drive.google.com/drive/folders/1JpOplXRWuCih5OKGL31_bs5Xc4ovoqcd?usp=sharing)からダウンロードし, 適当なフォルダで展開してください. その後, Unity HubのOpenから展開した.projフォルダを開いてください. 
+[Google Driveのリンク](https://drive.google.com/drive/folders/1JpOplXRWuCih5OKGL31_bs5Xc4ovoqcd?usp=sharing)からダウンロードし, 適当なフォルダで展開してください. その後, Unity HubのOpenから展開した.projフォルダを開いてください. 
 
-DriveにはUnityのライブラリは上げていませんが, Unity Hubで開く際に自動的に生成されます.
+Google DriveにはUnityのライブラリは上げていませんが, Unity Hubで開く際に自動的に生成されます.
 
-macOS Monterey 12.4, Windows 10で動作確認をしています. Windowsで開く際には警告が出る場合がありますが
+macOS, Unity 2021.3.1f1以外で開く際には警告が出ますが, 警告に従ってバージョンの変更やパッケージのインストールなどをすれば以下の環境では動作することを確認しています. 
+
+#### 動作確認
+macOS Monterey 12.4\
+Windows 10\
+Windows 11\
+Unity 2021.3.0f1\
+Unity 2021.3.1f1\
+Unity 2021.3.3f1
 
 ## アルゴリズムの説明
 差分進化(Differential Evolution, DE)は1995年に発表されたメタヒューリスティクスであり, 最適化手法の中でも強力な方法のひとつとして知られています. 差分進化では以下のようなアルゴリズムを用います.
