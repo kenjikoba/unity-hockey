@@ -1,10 +1,13 @@
-﻿using System;
+﻿// Q学習、基本的に変わりはEpisode以外あんまない。
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class QEnvironment : Environment
 {
-    [SerializeField] private GameObject GObject;
+    // [SerializeField] private GameObject GObject; 消した
+    [SerializeField] private GameObject gObject = null;
+    private GameObject GObject => gObject;
 
     [SerializeField] private int actionSize = 6;
     private int ActionSize { get { return actionSize; } }

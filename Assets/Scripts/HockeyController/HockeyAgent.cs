@@ -65,29 +65,69 @@ public class HockeyAgent : Agent
         TimeUp = false;
     }
 
+    // 変更というか書いた。
     public override int GetState() {
-        throw new NotImplementedException();
+        var stateDivide = 3;
+        var observations = CollectObservations();
+        var r = 0;
+        for(int i = 0; i < observations.Count; i++) { 
+            var v = Mathf.FloorToInt(Mathf.Lerp(0, stateDivide - 1, (float)observations[i]));
+            if(observations[i] >= 0.99f) {
+                v = stateDivide - 1;
+            }
+            r += (int)(v * Mathf.Pow(stateDivide, i));
+        }
+        return r; 
+        // throw new NotImplementedException();
     }
-
+    
+    // 変更というか書いた。
     public override double[] ActionNumberToVectorAction(int ActionNumber) {
-        throw new NotImplementedException();
+        var action = new double[2]; 
+        var xAxis = 0.0d;
+        var yAxis = 0.0d;   // 原点と、原点中心で各頂点に距離１の正五角形にした。
+        if(ActionNumber % 6 == 1) {
+            xAxis = 1.0d;
+            yAxis = 0.0d;
+        }
+        else if(ActionNumber % 6 == 2) {
+            xAxis = 0.3d;
+            yAxis = 0.9d;
+        }
+        else if(ActionNumber % 6 == 3) {
+            xAxis = -0.8d;
+            yAxis = 0.6d;
+        }
+        else if(ActionNumber % 6 == 4) {
+            xAxis = -0.8d;
+            yAxis = -0.6d;
+        }
+        else if(ActionNumber % 6 == 5) {
+            xAxis = 0.3d;
+            yAxis = -0.9d;
+        }
+
+        action[0] = xAxis;
+        action[1] = yAxis;
+        return action;
+        // throw new NotImplementedException();
     }
 
     // Agentへの入力を集める
     public override List<double> CollectObservations() {
         var observations = new List<double>();
-        double scalingFactor = 10f;
+        double scalingFactor = 10f; // 10.0のこと。
 
         var pos = transform.position;
         var pack_pos = Pack.transform.position;
         var opponent_pos = Opponent.transform.position;
 
-        observations.Add(pos.x*scalingFactor);
-        observations.Add(pos.z*scalingFactor*ModeSign);
-        observations.Add((pos.x-pack_pos.x)*scalingFactor);
-        observations.Add((pos.z-pack_pos.z)*scalingFactor*ModeSign);
-        observations.Add(opponent_pos.x*scalingFactor);
-        observations.Add(opponent_pos.z*scalingFactor*ModeSign);
+        observations.Add(pos.x*scalingFactor);  //自分の横の座標
+        observations.Add(pos.z*scalingFactor*ModeSign); //自分の縦の座標
+        observations.Add((pos.x-pack_pos.x)*scalingFactor); //自分の横の座標-パックの横の座標
+        observations.Add((pos.z-pack_pos.z)*scalingFactor*ModeSign); //自分の縦の座標-パックの縦の座標
+        observations.Add(opponent_pos.x*scalingFactor);  //相手の横の座標
+        observations.Add(opponent_pos.z*scalingFactor*ModeSign); //相手の縦の座標
         return observations;
     }
 

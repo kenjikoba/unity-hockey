@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameModeManager : MonoBehaviour
 {
     public DEEnvironment de;
+    public QEnvironment qe;
     public ManualPlayer mp;
     public ComputerPlayer ap;
     public PackManager pm;
@@ -24,10 +25,12 @@ public class GameModeManager : MonoBehaviour
         if (Mode == "Auto") {
             if (de.WaitingFlag) {
                 de.Reset();
+                // qe.Reset();
                 pm.Reset();
             }
             if (de.RestartFlag) {
                de.Restart();
+            //    qe.Restart();
                pm.Reset();
             }
         }
@@ -49,6 +52,7 @@ public class GameModeManager : MonoBehaviour
                 mp.Inactivate();
                 ap.Inactivate();
                 de.Activate();
+                // qe.Activate();
             }
             //学習エージェントを非活性化
             //手動プレイヤー、敵エージェントを活性化

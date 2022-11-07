@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿// 微分進化（ニューロン進化）
+using UnityEngine;
 using System.Collections.Generic;
 using System;
 using System.IO;

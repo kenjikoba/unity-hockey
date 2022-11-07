@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿using UnityEngine; // Load関数が少し違うのと、Save関数が本当に絶妙に違う。
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
