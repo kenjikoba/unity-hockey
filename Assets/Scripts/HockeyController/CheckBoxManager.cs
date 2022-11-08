@@ -11,6 +11,7 @@ public class CheckBoxManager : MonoBehaviour
     public GameObject HardCheckBox;
     public GameObject MouseCheckBox;
     public GameObject KeyCheckBox;
+    public GameObject QLearningBox;
 
 
     public string GetMode() {
@@ -24,6 +25,7 @@ public class CheckBoxManager : MonoBehaviour
         HardCheckBox.SetActive(false);
         MouseCheckBox.SetActive(false);
         KeyCheckBox.SetActive(false);
+        QLearningBox.SetActive(false);
     }
 
 
@@ -39,6 +41,7 @@ public class CheckBoxManager : MonoBehaviour
             HardCheckBox.SetActive(true);
             MouseCheckBox.SetActive(true);
             KeyCheckBox.SetActive(true);
+            QLearningBox.SetActive(true);
         } else {
             //チェックボックスを隠す
             Mode = "Auto";
@@ -48,6 +51,7 @@ public class CheckBoxManager : MonoBehaviour
             HardCheckBox.SetActive(false);
             MouseCheckBox.SetActive(false);
             KeyCheckBox.SetActive(false);
+            QLearningBox.SetActive(false);
         }
     }
 }

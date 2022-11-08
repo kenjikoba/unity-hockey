@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GameModeManager : MonoBehaviour
 {
-    public DEEnvironment de;
+    // public DEEnvironment de;
     public QEnvironment qe;
     public ManualPlayer mp;
     public ComputerPlayer ap;
@@ -21,17 +21,23 @@ public class GameModeManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //学習モードの時、得点が入るとプレイヤー・パックの一をリセット
+        //学習モードの時、得点が入るとプレイヤー・パックの位置をリセット
         if (Mode == "Auto") {
-            if (de.WaitingFlag) {
-                de.Reset();
-                // qe.Reset();
-                pm.Reset();
-            }
-            if (de.RestartFlag) {
-               de.Restart();
-            //    qe.Restart();
+            // if (de.WaitingFlag) {
+            //     pm.Reset();
+            //     de.Reset();
+            // }
+            // if (qe.WaitingFlag) {
+            //     pm.Reset();
+            //     qe.Reset();
+            // }
+            // if (de.RestartFlag) {
+            //    pm.Reset();
+            //    de.Restart();
+            // }
+            if (qe.RestartFlag) {
                pm.Reset();
+               qe.Restart();
             }
         }
 
@@ -51,16 +57,16 @@ public class GameModeManager : MonoBehaviour
             if (Mode == "Auto") {
                 mp.Inactivate();
                 ap.Inactivate();
-                de.Activate();
-                // qe.Activate();
+                // de.Activate();
+                qe.Activate();
             }
             //学習エージェントを非活性化
             //手動プレイヤー、敵エージェントを活性化
             if (Mode == "Manual") {
-                de.Inactivate();
+                // de.Inactivate();
+                qe.Inactivate();
                 mp.Activate();
                 ap.Activate();
-
             }
         }
     }

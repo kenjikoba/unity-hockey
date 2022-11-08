@@ -70,8 +70,10 @@ public class HockeyAgent : Agent
         var stateDivide = 3;
         var observations = CollectObservations();
         var r = 0;
-        for(int i = 0; i < observations.Count; i++) { 
-            var v = Mathf.FloorToInt(Mathf.Lerp(0, stateDivide - 1, (float)observations[i]));
+        for(int i = 0; i < observations.Count; i++) { // 0とstateDivide-1の何パーのものを返す。
+            var v = Mathf.FloorToInt(Mathf.Lerp(0, stateDivide - 1, Mathf.Abs((float)observations[i])));
+            // var v = Mathf.FloorToInt(Mathf.Lerp(0, stateDivide - 1, (float)observations[i]));
+            // r += v;   // いらないやつ
             if(observations[i] >= 0.99f) {
                 v = stateDivide - 1;
             }
@@ -122,8 +124,8 @@ public class HockeyAgent : Agent
         var pack_pos = Pack.transform.position;
         var opponent_pos = Opponent.transform.position;
 
-        observations.Add(pos.x*scalingFactor);  //自分の横の座標
-        observations.Add(pos.z*scalingFactor*ModeSign); //自分の縦の座標
+        observations.Add(pos.x*scalingFactor);  //自分の横の座標,-0.5<x<0.5
+        observations.Add(pos.z*scalingFactor*ModeSign); //自分の縦の座標-0.5<y<0.5
         observations.Add((pos.x-pack_pos.x)*scalingFactor); //自分の横の座標-パックの横の座標
         observations.Add((pos.z-pack_pos.z)*scalingFactor*ModeSign); //自分の縦の座標-パックの縦の座標
         observations.Add(opponent_pos.x*scalingFactor);  //相手の横の座標

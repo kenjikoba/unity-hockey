@@ -32,7 +32,7 @@ public class QBrain : Brain
         QTable = new float[StateSize][];
         for (int i = 0; i < StateSize; i++)
         {
-            QTable[i] = new float[ActionSize];
+            QTable[i] = new float[ActionSize]; // 初期化で最初は0が入ってるっぽい。
         }
         //Load("QT01.txt");
     }
@@ -97,8 +97,8 @@ public class QBrain : Brain
         }
     }
 
-
-
+// path, FileMode.OpenOrCreate
+// path, FileMode.Create, FileAccess.Write
     public override void Save(string path)
     {
         using (var bw = new BinaryWriter(new FileStream(path, FileMode.OpenOrCreate)))

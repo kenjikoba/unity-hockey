@@ -120,7 +120,7 @@ public class NEEnvironment : Environment
                 brain = nextBrain
             });
         }
-        UpdateText();
+        // UpdateText();
     }
 
     private void SetNextGeneration() {
@@ -131,7 +131,7 @@ public class NEEnvironment : Environment
         GenBestRecord = 0;
         Agents.ForEach(a => a.Reset());
         SetStartAgents();
-        UpdateText();
+        // UpdateText();
     }
 
     private static int CompareBrains(Brain a, Brain b) {
@@ -157,13 +157,13 @@ public class NEEnvironment : Environment
         Generation++;
     }
 
-    private void UpdateText() {
-        PopulationText.text = "Population: " + (TotalPopulation - CurrentBrains.Count) + "/" + TotalPopulation
-            + "\nGeneration: " + (Generation + 1)
-            + "\nBest Record: " + BestRecord
-            + "\nBest this gen: " + GenBestRecord
-            + "\nAverage: " + AvgReward;
-    }
+    // private void UpdateText() {
+    //     PopulationText.text = "Population: " + (TotalPopulation - CurrentBrains.Count) + "/" + TotalPopulation
+    //         + "\nGeneration: " + (Generation + 1)
+    //         + "\nBest Record: " + BestRecord
+    //         + "\nBest this gen: " + GenBestRecord
+    //         + "\nAverage: " + AvgReward;
+    // }
 
     private struct AgentPair
     {

@@ -12,7 +12,12 @@ public class ComputerPlayer : MonoBehaviour
     private int HiddenLayers = 1;
     private int OutputSize = 2;
 
+    // Q学習
+    private int ActionSize = 6;
+    private int StateSize = 1024;
+
     private NNBrain brain;
+    private QBrain QLBrain;
     private HockeyAgent agent;
 
     void Awake() {
@@ -31,7 +36,7 @@ public class ComputerPlayer : MonoBehaviour
 
     //敵エージェントのレベルをEasyにセット
     public void SetEasyBrain() {
-        SetComputerLevel("EASY");
+        SetComputerLevel("BestBrain");
     }
     //敵エージェントのレベルをMediumにセット
     public void SetMediumBrain() {
@@ -40,6 +45,10 @@ public class ComputerPlayer : MonoBehaviour
     //敵エージェントのレベルをHardにセット
     public void SetHardBrain() {
         SetComputerLevel("HARD");
+    }
+    //敵エージェントのQ学習にセット
+    public void SetQBrain() {
+        SetComputerLevel("Q");
     }
 
 
@@ -51,22 +60,39 @@ public class ComputerPlayer : MonoBehaviour
         }
         //レベルに変更がある場合には、そのBrainをLoadする
         if (prev_computer_level != computer_level) {
-            string brain_txt = System.IO.Path.Combine(Application.streamingAssetsPath, "ComputerBrains/"+computer_level+".txt");
-            brain.Load(brain_txt);
+            if (computer_level != "Q") {
+                string brain_txt = System.IO.Path.Combine(Application.streamingAssetsPath, "ComputerBrains/"+computer_level+".txt");
+                brain.Load(brain_txt);
+            }
+            else {
+                QLBrain = new QBrain(StateSize, ActionSize);
+                string brain_txt = System.IO.Path.Combine(Application.streamingAssetsPath, "ComputerBrains/"+computer_level+".txt");
+                QLBrain.Load(brain_txt);
+            }
+        }
+        if (computer_level != "Q") {
+            //現在の状態を取得
+            var observation = agent.CollectObservations();
+            //行動を決定
+            var action = brain.GetAction(observation);
+            //行動の実施
+            agent.AgentAction(action);
+
+            agent.BattleTime = 0;
+            if (agent.TimeUp) {
+                agent.AgentReset();
+            }
+        }
+        else {
+            var CurrentState = agent.GetState();
+            int ActionNo = QLBrain.GetAction(CurrentState); 
+            var action = agent.ActionNumberToVectorAction(ActionNo);
+            agent.AgentAction(action);
+            if (agent.TimeUp) {
+                agent.AgentReset();
+            }
         }
         
-        //現在の状態を取得
-        var observation = agent.CollectObservations();
-        //行動を決定
-        var action = brain.GetAction(observation);
-        //行動の実施
-        agent.AgentAction(action);
-
-        agent.BattleTime = 0;
-        if (agent.TimeUp) {
-            agent.AgentReset();
-        }
-
         prev_computer_level = computer_level;
     }
 

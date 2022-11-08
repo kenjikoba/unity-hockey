@@ -2,47 +2,182 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
 
 public class QEnvironment : Environment
 {
-    // [SerializeField] private GameObject GObject; 消した
-    [SerializeField] private GameObject gObject = null;
-    private GameObject GObject => gObject;
+//     // 加えた。
+    /***** Num of Symaltaneously Playing Agents *****/
+    [SerializeField] private int nAgents = 2;
+    private int NAgents { get { return nAgents; } }
+    
+    // /***** SerializeField for gameObjects *****/
+    [Header("Agent Prefab"), SerializeField] private GameObject GObject1;
+    [Header("Agent Prefab"), SerializeField] private GameObject GObject2;
 
     [SerializeField] private int actionSize = 6;
     private int ActionSize { get { return actionSize; } }
 
-    [SerializeField] private int stateSize = 4;
+    [SerializeField] private int stateSize = 1024;
     private int StateSize { get { return stateSize; } }
 
-    private QBrain QLBrain;
-    private Agent LearningAgent;
+    private QBrain QLBrain1;
+    private QBrain QLBrain2;
+    private HockeyAgent LearningAgent1;
+    private HockeyAgent LearningAgent2;
 
-    private int PrevState;
+    private int PrevState1;
+    private int PrevState2;
 
-    void Start()
-    {
-        QLBrain = new QBrain(StateSize, ActionSize);
-        LearningAgent = GObject.GetComponent<Agent>();
-        PrevState = LearningAgent.GetState();
+    /***** Values for Record *****/
+    private float BestRecord { get; set; }
+
+    /***** Bool Objects For Snchronization With Opponent Player *****/
+    // Getter and Setter should be written?
+    public bool WaitingFlag = false;
+    public bool RestartFlag = false;
+    public bool ManualModeFlag = false;
+
+    [Header("UI References"), SerializeField] private Text Qtext = null;
+    
+    /***** Property of GameObjects *****/
+    private Text QText { get { return Qtext; } }
+
+    /***** 学習が開始された際に呼ばれる *****/
+    void Awake() {
+        // 同時にプレイするプレーヤー数. 現在は2で固定.
+        if (nAgents != 2) {
+            Debug.Log("Now, nAgents must be equal to 2.");
+            nAgents = 2;
+        }
+        
+        QLBrain1 = new QBrain(StateSize, ActionSize);
+        QLBrain2 = new QBrain(StateSize, ActionSize);
+        LearningAgent1 = GObject1.GetComponent<HockeyAgent>();
+        LearningAgent2 = GObject2.GetComponent<HockeyAgent>();
+        PrevState1 = LearningAgent1.GetState();
+        PrevState2 = LearningAgent2.GetState();
+    }
+
+    public void Inactivate() {
+        ManualModeFlag = true;
+        GObject1.SetActive(false);
+        GObject2.SetActive(false);
+    }
+
+    public void Activate() {
+        ManualModeFlag = false;
+        GObject1.SetActive(true);
+        GObject2.SetActive(true);
+    }
+
+    // Agentが切り替わる際にReset()が呼ばれる
+    /***** Reset() Is Used When Agents Change *****/
+    public void Reset() {
+        WaitingFlag = false;
+    }
+
+    // Agentが変わらない場合はRestart()が呼ばれる
+    /***** Restart() Is Used When Agents Don't Change *****/
+    public void Restart() {
+        RestartFlag = false;
+        LearningAgent1.TimeUp = false;
+        LearningAgent2.TimeUp = false;
+        // AgentsSet.ForEach(p => { p.agent.TimeUp = false; });
     }
 
     private void FixedUpdate()
     {
-        AgentUpdate(LearningAgent, QLBrain);
-        if (LearningAgent.IsDone)
+        // Waiting, Restart, ManualModeのいずれかがtrueであれば学習を進めない
+        if (WaitingFlag || RestartFlag || ManualModeFlag) {
+            return;
+        }
+
+        // if (LearningAgent1.IsDone) {
+        //     int r = (int)LearningAgent1.Reward;
+        //     BestRecord = Mathf.Max(r, BestRecord);
+        //     System.Console.WriteLine("Hello, World! ={0} \n",BestRecord.ToString());
+        //     File.WriteAllText("./Assets/BestRecord.txt", BestRecord.ToString());
+        //     QLBrain1.Save("./Assets/Q.txt");
+        //     // WaitingFlag = true;
+        // }
+        if (LearningAgent1.TimeUp) {
+            RestartFlag = true;
+            int r = (int)LearningAgent1.Reward;
+            BestRecord = Mathf.Max(r, BestRecord);
+            int pastRecord = 0;
+            // インスタンスを作成，パスをコンストラクタに渡す
+            using (var objReader = new StreamReader("./Assets/BestRecord.txt")) {
+                string pastRead = objReader.ReadToEnd();
+                pastRecord = int.Parse(pastRead);
+            }
+            if (pastRecord < BestRecord) {
+                File.WriteAllText("./Assets/BestRecord.txt", BestRecord.ToString());
+                QLBrain1.Save("./Assets/StreamingAssets/ComputerBrains/Q.txt");
+            }
+            UpdateText();
+        }
+        // if (LearningAgent2.IsDone) {
+        //     int r = (int)LearningAgent2.Reward;
+        //     BestRecord = Mathf.Max(r, BestRecord);
+        //     System.Console.WriteLine("Hello, World! ={0} \n",BestRecord.ToString());
+        //     File.WriteAllText("./Assets/BestRecord.txt", BestRecord.ToString());
+        //     QLBrain2.Save("./Assets/Q.txt");
+        //     // WaitingFlag = true;
+        // }
+        if (LearningAgent2.TimeUp) {
+            RestartFlag = true;
+            int r = (int)LearningAgent2.Reward;
+            BestRecord = Mathf.Max(r, BestRecord);
+            int pastRecord = 0;
+            // インスタンスを作成，パスをコンストラクタに渡す
+            using (var objReader = new StreamReader("./Assets/BestRecord.txt")) {
+                string pastRead = objReader.ReadToEnd();
+                pastRecord = int.Parse(pastRead);
+            }
+            if (pastRecord < BestRecord) {
+                File.WriteAllText("./Assets/BestRecord.txt", BestRecord.ToString());
+                QLBrain2.Save("./Assets/StreamingAssets/ComputerBrains/Q.txt");
+            }
+            UpdateText();
+        }
+
+        AgentUpdate(LearningAgent1, QLBrain1,1);
+        if (LearningAgent1.IsDone)
         {
-            LearningAgent.Reset();
+            LearningAgent1.Reset();
+        }
+        AgentUpdate(LearningAgent2, QLBrain2,2);
+        if (LearningAgent2.IsDone)
+        {
+            LearningAgent2.Reset();
         }
     }
 
-    private void AgentUpdate(Agent a, QBrain b)
+    private void AgentUpdate(Agent a, QBrain b, int num)
     {
-        int ActionNo = b.GetAction(PrevState);
-        var action = a.ActionNumberToVectorAction(ActionNo);
-        a.AgentAction(action);
-        var NewState = a.GetState();
-        b.UpdateTable(PrevState, NewState, ActionNo, a.Reward, a.IsDone);
-        PrevState = NewState;
+        if (num == 1) {
+            int ActionNo = b.GetAction(PrevState1); 
+            var action = a.ActionNumberToVectorAction(ActionNo);
+            a.AgentAction(action);
+            var NewState = a.GetState();
+            b.UpdateTable(PrevState1, NewState, ActionNo, a.Reward, a.IsDone);
+            PrevState1 = NewState;
+        }
+        else {
+            int ActionNo = b.GetAction(PrevState2); 
+            var action = a.ActionNumberToVectorAction(ActionNo);
+            a.AgentAction(action);
+            var NewState = a.GetState();
+            b.UpdateTable(PrevState2, NewState, ActionNo, a.Reward, a.IsDone);
+            PrevState2 = NewState;
+        }
+    }
+
+    private void UpdateText() {
+        QText.text = "Best Record: " + BestRecord; 
     }
 }
