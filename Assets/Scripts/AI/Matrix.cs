@@ -46,7 +46,7 @@ public class Matrix
 
     public Matrix Mul(Matrix m) {
         if (Colmun != m.Row) {
-            throw new ArgumentException("colmun is not match row");
+            throw new ArgumentException("colmun does not match row");
         }
 
         var newM = new Matrix(Row, m.Colmun);

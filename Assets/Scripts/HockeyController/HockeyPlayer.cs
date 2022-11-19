@@ -42,15 +42,15 @@ public class HockeyPlayer : MonoBehaviour
             // z<0 が陣地のとき
             if (pos[2] < -0.85f) {
                 pos[2] = -0.85f;
-            } else if (pos[2] > -0.1f) {
-                pos[2] = -0.1f;
+            } else if (pos[2] > -0.35f) {
+                pos[2] = -0.35f; // 変えた
             }
         } else if (ModeSign == -1) {
             // z>0 が陣地のとき
             if (pos[2] > 0.85f) {
                 pos[2] = 0.85f;
-            } else if (pos[2] < 0.1f) {
-                pos[2] = 0.1f;
+            } else if (pos[2] < 0.35f) {
+                pos[2] = 0.35f; //　変えた
             }
         }
         return pos;

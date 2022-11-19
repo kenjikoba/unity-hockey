@@ -103,7 +103,7 @@ public class NEEnvironment : Environment
     }
 
     private void AgentUpdate(Agent a, NNBrain b) {
-        var observation = a.CollectObservations();
+        var observation = a.DECollectObservations();
         var action = b.GetAction(observation);
         a.AgentAction(action); //only need fitness at the end
         //b.UpdateBrain(state, a.Reward) (QLearning)

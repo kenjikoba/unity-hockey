@@ -35,7 +35,7 @@ public class NERuntime : MonoBehaviour
             }
         }
         else {
-            var observations = CurrentAgent.CollectObservations();
+            var observations = CurrentAgent.DECollectObservations();
             CurrentAgent.AgentAction(CurrentBrain.GetAction(observations));
         }
     }

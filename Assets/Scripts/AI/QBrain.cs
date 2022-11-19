@@ -44,6 +44,23 @@ public class QBrain : Brain
 		CreateTable();
 	}
 
+    public double GetMaxQ(int state) {
+        double max_q;
+        max_q = 0;
+        for (int i = 0; i < ActionSize; i++) {
+            double q = (double)QTable[state][i];
+            if (q > max_q) {
+                max_q = q;
+            }
+        }
+        return max_q;
+    }
+
+    public double GetQ(int state, int action) {
+        double q = (double)QTable[state][action];
+        return q;
+    }
+
     public int GetAction(int state)
     {
         int action;

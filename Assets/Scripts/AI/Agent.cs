@@ -12,21 +12,32 @@ public abstract class Agent : MonoBehaviour
         Reward = reward;
     }
 
+    // public void AddReward(float reward) {
+    //     Reward = reward;
+    // }
     public void AddReward(float reward) {
         Reward += reward;
     }
 
     public abstract int GetState();
 
-    public abstract List<double> CollectObservations();
+    public abstract List<double> QCollectObservations();
+
+    public abstract List<double> DECollectObservations();
+
+    public abstract List<double> DQNCollectObservations();
 
     public abstract void AgentAction(double[] vectorAction);
+
+    public abstract void DQNAgentAction(double[] vectorAction);
 
     public abstract void AgentReset();
 
     public abstract void Stop();
 
     public abstract double[] ActionNumberToVectorAction(int ActionNumber);
+
+    public abstract double[] DQNActionNumberToVectorAction(int ActionNumber);
 
     public void Done()
     {

@@ -6,6 +6,7 @@ public class GameModeManager : MonoBehaviour
 {
     // public DEEnvironment de;
     public QEnvironment qe;
+    // public DQNEnvironment dqne;
     public ManualPlayer mp;
     public ComputerPlayer ap;
     public PackManager pm;
@@ -16,6 +17,7 @@ public class GameModeManager : MonoBehaviour
     void Start()
     {
        Mode = cbm.GetMode();
+       pm.Reset();
     }
 
     // Update is called once per frame
@@ -27,9 +29,13 @@ public class GameModeManager : MonoBehaviour
             //     pm.Reset();
             //     de.Reset();
             // }
-            // if (qe.WaitingFlag) {
+            if (qe.WaitingFlag) {
+                pm.Reset();
+                qe.Reset();
+            }
+            // if (dqne.WaitingFlag) {
             //     pm.Reset();
-            //     qe.Reset();
+            //     dqne.Reset();
             // }
             // if (de.RestartFlag) {
             //    pm.Reset();
@@ -39,6 +45,10 @@ public class GameModeManager : MonoBehaviour
                pm.Reset();
                qe.Restart();
             }
+            // if (dqne.RestartFlag) {
+            //     pm.Reset();
+            //     dqne.Restart();
+            // }
         }
 
         //対戦モードの時は得点が入るとパックのみリセット
@@ -58,12 +68,14 @@ public class GameModeManager : MonoBehaviour
                 mp.Inactivate();
                 ap.Inactivate();
                 // de.Activate();
+                // dqne.Activate();
                 qe.Activate();
             }
             //学習エージェントを非活性化
             //手動プレイヤー、敵エージェントを活性化
             if (Mode == "Manual") {
                 // de.Inactivate();
+                // dqne.Inactivate();
                 qe.Inactivate();
                 mp.Activate();
                 ap.Activate();

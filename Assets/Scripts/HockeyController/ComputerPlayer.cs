@@ -14,7 +14,7 @@ public class ComputerPlayer : MonoBehaviour
 
     // Q学習
     private int ActionSize = 6;
-    private int StateSize = 1024;
+    private int StateSize = 65536;
 
     private NNBrain brain;
     private QBrain QLBrain;
@@ -66,13 +66,13 @@ public class ComputerPlayer : MonoBehaviour
             }
             else {
                 QLBrain = new QBrain(StateSize, ActionSize);
-                string brain_txt = System.IO.Path.Combine(Application.streamingAssetsPath, "ComputerBrains/"+computer_level+".txt");
+                string brain_txt = System.IO.Path.Combine(Application.streamingAssetsPath, "ComputerBrains/"+"Q"+".txt");
                 QLBrain.Load(brain_txt);
             }
         }
         if (computer_level != "Q") {
             //現在の状態を取得
-            var observation = agent.CollectObservations();
+            var observation = agent.DECollectObservations();
             //行動を決定
             var action = brain.GetAction(observation);
             //行動の実施

@@ -170,7 +170,7 @@ public class DEEnvironment : Environment
     /***************************/
     private void AgentUpdate(Agent a, NNBrain b) {
         // ボードの状態を取得
-        var observation = a.CollectObservations();
+        var observation = a.DECollectObservations();
         // NNBrainからactionを取得
         var action = b.GetAction(observation);
         // Agentにactionを送る
